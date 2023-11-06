@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -24,4 +24,174 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+} */
+
+
+
+.App {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  height: 100vh;
+  background: rgba(194, 233, 251, 1);
+  background: radial-gradient(circle,
+      rgba(161, 196, 253, 1) 10%,
+      rgba(194, 233, 251, 1) 100%);
+}
+
+.cons {
+  background: rgba(194, 233, 251, 1);
+  background: radial-gradient(circle,
+      rgba(161, 196, 253, 1) 10%,
+      rgba(194, 233, 251, 1) 100%);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* .progress-bar {
+    width: 400px;
+    height: 15px;
+    background-color: white;
+    margin-bottom: 50px;
+} */
+
+/* .progress-bar div {
+    width: 25%;
+    height: 100%;
+    background-color: rgb(98, 0, 255);
+} */
+
+.card {
+  width: 400px;
+  background-color: white;
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  max-width: 500px;
+  margin: auto;
+  margin-top: 75px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+  gap: 0.25em;
+}
+
+.form-group:last-child {
+  margin: 0;
+}
+
+.form-group>label {
+  font-weight: bold;
+  font-size: 0.8em;
+  color: #333;
+}
+
+.form-group>input {
+  border: 1px solid #333;
+  border-radius: 0.25em;
+  font-size: 1rem;
+  padding: 0.25em;
+}
+
+.step-title {
+  margin: 0;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  text-align: center;
+}
+
+input {
+  border: 2px solid rgb(98, 0, 255);
+  border-radius: 5px;
+  height: 35px;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+select {
+  border: 2px solid rgb(98, 0, 255);
+  border-radius: 5px;
+  height: 35px;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.button-area {
+  display: flex;
+  align-content: space-between;
+}
+
+button {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 0.8rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+textarea {
+  height: 5rem;
+  border: 2px solid rgb(98, 0, 255);
+  border-radius: 5px;
+}
+
+
+
+.gender-radio-group {
+  display: flex;
+  align-items: center;
+  border: 2px solid rgb(98, 0, 255);
+  border-radius: 5px;
+}
+
+.gender-radio-group input[type="radio"] {
+  margin-right: 5px;
+  height: 35px;
+}
+
+.gender-radio-group label {
+  font-weight: normal;
+  margin-right: 10px;
+}
+
+.progress_new {
+  margin: 50px;
+  width: 500px;
+  text-align: center;
+}
+
+.progress {
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.progress-bar {
+  height: 18px;
+  background-color: #ee303c;
+  border-radius: 4px;
+  transition: 0.4s linear;
+  transition-property: width, background-color;
+}
+
+.progress-striped .progress-bar {
+  background-color: #FCBC51;
+  width: 100%;
+  background-image: linear-gradient(45deg, rgb(252, 163, 17) 25%,
+      transparent 25%, transparent 50%,
+      rgb(252, 163, 17) 50%, rgb(252, 163, 17) 75%,
+      transparent 75%, transparent);
+
 }
