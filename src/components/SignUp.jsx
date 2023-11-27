@@ -1,23 +1,77 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const SignUp = ({ page, setPage, formData, setFormData }) => {
   const [errors, setErrors] = useState({});
   const [submit, setSubmit] = useState(false);
+  const [signupData, setSignupData] = useState({});
 
-  const navigate = useRouter();
+  const newId = formData.signupId;
 
-  const handlesubmit = async (e) => {
-    e.preventDefault();
-    const formErrors = validateForm(formData);
+  useEffect(() => {
+    if (newId) {
+      getUserDetails(newId);
+    }
+  }, [newId]);
+
+
+  const getUserDetails = async (newId) => {
+    try {
+      const response = await axios.get(`/api/uses/signup/${newId}`);
+      const user = response.data.data;
+      setSignupData(user);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+
+  const handlesubmit = async () => {
+
+    // if (!formData) {
+    const formErrors = validateForm(signupData);
     setErrors(formErrors);
     setSubmit(true);
-    if (Object.keys(formErrors).length === 0) {
-      setPage(page + 1); // Only proceed to the next page if there are no errors
+
+    if (Object.keys(formErrors).length === 0 && signupData) {
+      try {
+
+        if (newId) {
+          const res = await axios.put(`/api/uses/signup/${newId}`, signupData);
+          if (res.status === 200) {
+            alert('User Saved successfully');
+            setFormData({
+              ...formData, fullname: signupData.fullname,
+              email: signupData.email,
+              password: signupData.password,
+            });
+            setPage(page + 1);
+          } else {
+            console.error('Failed to update user');
+          }
+        } else {
+          const response = await axios.post('/api/uses/signup', signupData);
+          alert("User Saved Successfully!!", response.data);
+          const userId = response.data.data;
+          setFormData({
+            ...formData, fullname: signupData.fullname,
+            email: signupData.email,
+            password: signupData.password,
+            signupId: userId,
+          });
+          setPage(page + 1);
+        }
+
+      } catch (error) {
+        alert("Error Saving User", error);
+        console.log(error);
+      }
     }
+
+
   }
 
   const validateForm = (inputValues) => {
@@ -25,16 +79,24 @@ const SignUp = ({ page, setPage, formData, setFormData }) => {
     if (!inputValues.fullname) {
       errors.fullname = 'FullName is required';
     }
-    if (!inputValues.username) {
-      errors.username = 'UserName is required';
-    }
     if (!inputValues.password) {
       errors.password = 'Password is required';
     } else if (inputValues.password.length < 6) {
       errors.password = 'Password must be at least 6 characters long';
     }
+    if (!inputValues.email) {
+      errors.email = 'Email is required';
+    } else if (!isValidEmail(inputValues.email)) {
+      errors.email = 'Invalid email format';
+    }
     return errors;
   }
+
+  const isValidEmail = (email) => {
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+    return emailRegex.test(email);
+  }
+
 
   return (
     <div className="card">
@@ -44,26 +106,26 @@ const SignUp = ({ page, setPage, formData, setFormData }) => {
         placeholder="Full Name"
         className="form-group"
         name='fullname'
-        value={formData.fullname}
-        onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
+        value={signupData.fullname}
+        onChange={(e) => setSignupData({ ...signupData, fullname: e.target.value })}
       />
       {submit && errors.fullname && <div className='text-red-600 text-start'>{errors.fullname}</div>}
       <input
+        className='form-group'
         type="text"
-        className="form-group"
-        placeholder="Username"
-        name='username'
-        value={formData.username}
-        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+        placeholder="Email"
+        value={signupData.email}
+        name='email'
+        onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
       />
-      {submit && errors.username && <div className='text-red-600 text-start'>{errors.username}</div>}
+      {submit && errors.email && <div className="text-red-600 text-start">{errors.email}</div>}
       <input
         type="password"
         className="form-group"
         placeholder="Password"
         name='password'
-        value={formData.password}
-        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+        value={signupData.password}
+        onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
       />
       {submit && errors.password && <div className="text-red-600 text-start">{errors.password}</div>}
       <button type="submit" className='rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"' onClick={handlesubmit}>

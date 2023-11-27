@@ -26,8 +26,6 @@ body {
     rgb(var(--background-start-rgb));
 } */
 
-
-
 .App {
   overflow: hidden;
   display: flex;
@@ -47,22 +45,24 @@ body {
   background: radial-gradient(circle,
       rgba(161, 196, 253, 1) 10%,
       rgba(194, 233, 251, 1) 100%);
+  
   height: 100vh;
+  padding-bottom: 20px;
   overflow: hidden;
+ 
 }
 
-/* .progress-bar {
-    width: 400px;
-    height: 15px;
-    background-color: white;
-    margin-bottom: 50px;
-} */
+.consupdate{
+  background: rgba(194, 233, 251, 1);
+  background: radial-gradient(circle,
+      rgba(161, 196, 253, 1) 10%,
+      rgba(194, 233, 251, 1) 100%);
 
-/* .progress-bar div {
-    width: 25%;
-    height: 100%;
-    background-color: rgb(98, 0, 255);
-} */
+  /* height: 100vh; */
+  padding-bottom: 20px; 
+  overflow: hidden;
+
+}
 
 .card {
   width: 400px;

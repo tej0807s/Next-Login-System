@@ -1,44 +1,55 @@
+import { NextResponse } from 'next/server';
+import { connect } from '@/lib/db';
+import SignUp from '@/models/signup';
+import LocationInfo from '@/models/locationinfo';
+import OtherInfo from '@/models/otherinfo';
+import PersonalInfo from '@/models/personalinfo';
 
-import { connect } from "@/lib/db";
-import User from "@/models/user";
-import { NextResponse } from "next/server";
-import mongoose from "mongoose";
-
-export async function DELETE(req, {params}) {
-
+export  async function DELETE(req) {
     try {
-
-        //const { id } = params;
-        const id = req.nextUrl.searchParams.get('id');
-        console.log("Received DELETE request for id:", id);
+        await connect(); // Connect to the database
         
-        await connect();
-        // if (!mongoose.Types.ObjectId.isValid(id)) {
-        //     return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
-        // }
+        const id = req.nextUrl.searchParams.get('id');
+        const locationinfo = req.nextUrl.searchParams.get('locationInfo');
+        const otherinfo = req.nextUrl.searchParams.get('otherInfo');
+        const personalinfo = req.nextUrl.searchParams.get('personalInfo');
+      
+        console.log("server id:", id)
 
-        const user = await User.findByIdAndDelete(id);
+        // Delete the corresponding records
+        const deletePromises = [
+            SignUp.findByIdAndDelete(id),
+            locationinfo ? LocationInfo.findByIdAndDelete(locationinfo) : Promise.resolve(),
+            otherinfo ? OtherInfo.findByIdAndDelete(otherinfo) : Promise.resolve(),
+            personalinfo ? PersonalInfo.findByIdAndDelete(personalinfo) : Promise.resolve(),
+        ];
 
-        if (!user) {
+        await Promise.all(deletePromises);
+
+        if (!SignUp) {
             return new NextResponse(JSON.stringify({ message: "User not found" }), {
                 status: 404,
                 headers: { "Content-Type": "application/json" },
             });
         }
 
-        // return new NextResponse(JSON.stringify({ message: "User deleted successfully" }), {
-        //     status: 200,
-        //     headers: { "Content-Type": "application/json" },
-        // });
-
-        return NextResponse.json({ message: "User deleted successfully", success: 200 });
-
+        // Return success response
+        return new NextResponse(
+            JSON.stringify({ message: 'User deleted successfully', success: 200 }),
+            {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+            }
+        );
     } catch (error) {
-        console.error("Error deleting user:", error);
-        return new NextResponse(JSON.stringify({ message: "Error deleting user" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-        });
+        console.error('Error deleting user:', error);
+        // Return error response
+        return new NextResponse(
+            JSON.stringify({ message: 'Error deleting user' }),
+            {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+            }
+        );
     }
-
 }

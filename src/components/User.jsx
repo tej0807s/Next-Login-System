@@ -40,7 +40,7 @@ const User = () => {
 
   return (
     <div className="container mx-auto">
-      <h1 className='text-center text-4xl font-bold text-rose-600 my-3'>Welcome User</h1>
+      <h1 className='text-center text-4xl font-bold text-rose-600 my-3'>Welcome {data.fullname}</h1>
       {loading ? (
         <p>Loading...</p>
       ) : data ? (
@@ -68,16 +68,16 @@ const User = () => {
                     <tr
                       className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
                       <td className="whitespace-nowrap px-5 py-2 font-medium">1</td>
-                      <td className="whitespace-nowrap px-5 py-2">{data.fullname}</td>
-                      <td className="whitespace-nowrap px-5 py-2">{data.username}</td>
-                      <td className="whitespace-nowrap px-5 py-2">{data.nickname}</td>
-                      <td className="whitespace-nowrap px-5 py-2">{data.gender}</td>
-                      <td className="whitespace-nowrap px-5 py-2">{data.email}</td>
-                      <td className="whitespace-nowrap px-5 py-2">{data.address}</td>
-                      <td className="whitespace-nowrap px-5 py-2">{data.nationality}</td>
-                      <td className="whitespace-nowrap px-5 py-2">{data.zipcode}</td>
-                      <td className="whitespace-nowrap px-5 py-2">{data.occupation}</td>
-                      <td className="whitespace-nowrap px-5 py-2">{data.about}</td>
+                      <td className="whitespace-nowrap px-5 py-2">{data.fullname || "-"}</td>
+                        <td className="whitespace-nowrap px-5 py-2">{data.username || "-"}</td>
+                        <td className="whitespace-nowrap px-5 py-2">{data.nickname || "-"}</td>
+                        <td className="whitespace-nowrap px-5 py-2">{data.gender || "-"}</td>
+                        <td className="whitespace-nowrap px-5 py-2">{data.email || "-"}</td>
+                        <td className="whitespace-nowrap px-5 py-2">{data.address || "-"}</td>
+                        <td className="whitespace-nowrap px-5 py-2">{data.nationality || "-"}</td>
+                        <td className="whitespace-nowrap px-5 py-2">{data.zipcode || "-"}</td>
+                        <td className="whitespace-nowrap px-5 py-2">{data.occupation || "-"}</td>
+                        <td className="whitespace-nowrap px-5 py-2">{data.about || "-"}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -88,7 +88,6 @@ const User = () => {
       ) : (
         <p>No data available</p>
       )}
-      {/* <button onClick={handleLogout} className="btn btn-dark">Logout</button> */}
       <button
         type="submit"
         onClick={logout}

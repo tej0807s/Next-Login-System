@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from 'bcryptjs';
 import { connect } from "@/lib/db";
 import User from '@/models/user';
+import SignUp from "@/models/signup";
 import  Jwt  from "jsonwebtoken";
 
 
@@ -16,7 +17,7 @@ export async function POST(req) {
         console.log(reqBody);
 
         //check if user exists
-        const user = await User.findOne({ email });
+        const user = await SignUp.findOne({ email });
         if (!user) {
             return NextResponse.json({ error: "User does not exist" }, { status: 400 })
         }

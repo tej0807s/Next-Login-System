@@ -4,7 +4,6 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Pagination, Select, MenuItem } from '@mui/material';
 
-
 const Admin = () => {
 
   const [data, setData] = useState([]);
@@ -12,6 +11,12 @@ const Admin = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
+  const [idsToDelete, setIdsToDelete] = useState({
+    locationInfo: [],
+    otherInfo: [],
+    personalInfo: [],
+  
+  });
 
   const navigate = useRouter();
 
@@ -19,7 +24,6 @@ const Admin = () => {
 
     try {
       await axios.get('/api/uses/logout');
-      console.log("Logout successfully");
       navigate.push('/login')
     } catch (error) {
       console.log(error.message);
@@ -33,8 +37,12 @@ const Admin = () => {
   const getUserDetails = async () => {
     try {
       const res = await axios.get("/api/uses/admin");
-      //console.log(res.data);
-      setData(res.data.data);
+      if (Array.isArray(res.data.data)) {
+        setData(res.data.data);
+      }
+      if (res.data.idsToDelete) {
+        setIdsToDelete(res.data.idsToDelete);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -58,18 +66,16 @@ const Admin = () => {
     setCurrentPage(1);
   }
 
-  const filterData = data.filter((item) => item.fullname.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filterData = data ? data.filter((item) => item.fullname && item.fullname.toLowerCase().includes(searchQuery.toLowerCase())) : [];
   const visibledata = filterData.slice(startIdx, endIdx);
 
-
   // Delete record
-
-  const handleDelete = async (id, fullname) => {
+  const handleDelete = async (id, fullname, index) => {
     if (window.confirm(`Are you sure you want to delete this data ${fullname}`)) {
       try {
-        const response = await axios.delete(`/api/delete?id=${id}`);
+        const response = await axios.delete(`/api/delete?id=${id}&locationInfo=${idsToDelete.locationInfo[index]}&otherInfo=${idsToDelete.otherInfo[index]}&personalInfo=${idsToDelete.personalInfo[index]}`);
         console.log(response.data);
-        if (response.status === 200) { // Check the status code
+        if (response.status === 200) { 
           alert('User deleted successfully');
           getUserDetails();
         } else {
@@ -81,6 +87,14 @@ const Admin = () => {
       }
     }
   }
+
+
+
+  // Update
+  const handleUpdate = async (id, index) => {
+    navigate.push(`/editpage/${id}&locationInfo=${idsToDelete.locationInfo[index]}&otherInfo=${idsToDelete.otherInfo[index]}&personalInfo=${idsToDelete.personalInfo[index]}`);
+  }
+
 
   return (
     <div className="container mx-auto">
@@ -140,18 +154,18 @@ const Admin = () => {
                         <tbody key={index}>
                           <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
                             <td className="whitespace-nowrap px-5 py-2 font-medium">{index}</td>
-                            <td className="whitespace-nowrap px-5 py-2">{i.fullname}</td>
-                            <td className="whitespace-nowrap px-5 py-2">{i.username}</td>
-                            <td className="whitespace-nowrap px-5 py-2">{i.nickname}</td>
-                            <td className="whitespace-nowrap px-5 py-2">{i.gender}</td>
-                            <td className="whitespace-nowrap px-5 py-2">{i.email}</td>
-                            <td className="whitespace-nowrap px-5 py-2">{i.address}</td>
-                            <td className="whitespace-nowrap px-5 py-2">{i.nationality}</td>
-                            <td className="whitespace-nowrap px-5 py-2">{i.zipcode}</td>
-                            <td className="whitespace-nowrap px-5 py-2">{i.occupation}</td>
-                            <td className="whitespace-nowrap px-5 py-2">{i.about}</td>
-                            <td><button type="button" className='px-2.5 py-2 text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800'>Update</button></td>
-                            <td><button type="button" onClick={() => handleDelete(i._id, i.fullname)} className='px-2.5 py-2 text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900'>Delete</button></td>
+                            <td className="whitespace-nowrap px-5 py-2">{i.fullname || '-'}</td>
+                            <td className="whitespace-nowrap px-5 py-2">{i.username || '-'}</td>
+                            <td className="whitespace-nowrap px-5 py-2">{i.nickname || '-'}</td>
+                            <td className="whitespace-nowrap px-5 py-2">{i.gender || '-'}</td>
+                            <td className="whitespace-nowrap px-5 py-2">{i.email || '-'}</td>
+                            <td className="whitespace-nowrap px-5 py-2">{i.address || '-'}</td>
+                            <td className="whitespace-nowrap px-5 py-2">{i.nationality || '-'}</td>
+                            <td className="whitespace-nowrap px-5 py-2">{i.zipcode || '-'}</td>
+                            <td className="whitespace-nowrap px-5 py-2">{i.occupation || '-'}</td>
+                            <td className="whitespace-nowrap px-5 py-2">{i.about || '-'}</td>
+                            <td><button type="button" onClick={() => handleUpdate(i._id, index)} className='px-2.5 py-2 text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800'>Update</button></td>
+                            <td><button type="button" onClick={() => handleDelete(i._id, i.fullname, index)} className='px-2.5 py-2 text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900'>Delete</button></td>
                           </tr>
                         </tbody>
                       )
@@ -187,10 +201,6 @@ const Admin = () => {
           onChange={(event, page) => setCurrentPage(page)}
         />
       </div>
-
-
-
-      {/* <button onClick={handleLogout} className="btn btn-dark">Logout</button> */}
       <button
         type="submit"
         onClick={logout}
@@ -199,6 +209,7 @@ const Admin = () => {
         Logout
       </button>
     </div >
+
 
   )
 }

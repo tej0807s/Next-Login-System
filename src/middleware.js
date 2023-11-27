@@ -10,18 +10,24 @@ export function middleware(request) {
     const token = request.cookies.get('token')?.value || '';
     const isAdmin = token.admin; // Assuming you have isAdmin as a Boolean in the decoded token
 
-    if(isAdmin === true){
+    if (isAdmin === true) {
 
         if (isPunlicPath && token) {
             return NextResponse.redirect(new URL('/admin', request.url))
         }
+
+        if (isPunlicPath && token) {
+            return NextResponse.redirect(new URL('/editpage/', request.url))
+        }
+
+
     } else {
 
         if (isPunlicPath && token) {
             return NextResponse.redirect(new URL('/user', request.url))
         }
     }
-    
+
 
     if (!isPunlicPath && !token) {
         return NextResponse.redirect(new URL('/login', request.url))
@@ -35,6 +41,9 @@ export const config = {
         '/login',
         '/admin',
         '/user',
+        '/editpage/id',
+        '/editpage'
     ]
 
 }
+

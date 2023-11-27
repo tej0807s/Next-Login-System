@@ -7,7 +7,7 @@ export const sendEmail = async ({ fullname, username, email, address, nationalit
             <html>
             <body>
                 <h1>Welcome to QuanticEdge Solution</h1>
-                <p>Hi ${fullname},</p>
+                <p>Hi <b>${fullname}</b>,</p>
                 <p>Thank you for joining QuanticEdge Solution. Here are your details:</p>
                 <table>
                     <tr>
@@ -53,10 +53,14 @@ export const sendEmail = async ({ fullname, username, email, address, nationalit
 
         <html>
             <body>
-                <h1>Welcome to QuanticEdge Solution</h1>
-                <p>Hi Admin,</p>
+                <h1>QuanticEdge Solution</h1>
+                <p>Hi <b>Admin</b>,</p>
                 <p>The New Form is Submitted:</p>
                 <table>
+                    <tr>
+                        <td>Username:</td>
+                        <td>${username}</td>
+                    </tr>
                     <tr>
                         <td>Username:</td>
                         <td>${username}</td>
@@ -101,7 +105,7 @@ export const sendEmail = async ({ fullname, username, email, address, nationalit
         const adminTranspoter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
             port: 465,
-            secure: true, 
+            secure: true,
             auth: {
                 user: process.env.EMAIL,
                 pass: process.env.PASSWORD
@@ -135,7 +139,7 @@ export const sendEmail = async ({ fullname, username, email, address, nationalit
         }
 
         console.log("Email send successfully");
-        
+
     } catch (error) {
         if (error.code === 11000 && error.keyPattern.email) {
             res.status(400).json({ message: 'Email is already in Use' });

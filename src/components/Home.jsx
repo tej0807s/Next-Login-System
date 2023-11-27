@@ -12,10 +12,10 @@ const Home = () => {
   const [page, setPage] = useState(0);
   const [formData, setFormData] = useState({
     fullname: "",
-    username: "",
+    email:"",
     password: "",
     nickname: "",
-    email: "",
+    username: "",
     address: "",
     nationality: "",
     zipcode: "",

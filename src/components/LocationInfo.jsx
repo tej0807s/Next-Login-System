@@ -1,21 +1,73 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'
 
 
 const LocationInfo = ({ page, setPage, formData, setFormData }) => {
     const [errors, setErrors] = useState({});
     const [submit, setSubmit] = useState(false);
+    const [locationInfo, setLocationInfo] = useState({});
+
+    const newId = formData.locationId;
+
+    useEffect(() => {
+        if (newId) {
+            getUserDetails(newId);
+        }
+    }, [newId]);
+
+
+    const getUserDetails = async (newId) => {
+        try {
+            const response = await axios.get(`/api/uses/locationinfo/${newId}`);
+            const user = response.data.data;
+            setLocationInfo(user);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
 
     const handlesubmit = async (e) => {
         e.preventDefault();
-        const formErrors = validateForm(formData);
+        const formErrors = validateForm(locationInfo);
         setErrors(formErrors);
         setSubmit(true);
-        if (Object.keys(formErrors).length === 0) {
-            setPage(page + 1); // Only proceed to the next page if there are no errors
+
+        if (Object.keys(formErrors).length === 0 && locationInfo) {
+            try {
+                if (newId) {
+                    const res = await axios.put(`/api/uses/locationinfo/${newId}`, locationInfo);
+                    if (res.status === 200) {
+                        alert('User Saved successfully');
+                        setFormData({
+                            ...formData, address: locationInfo.address,
+                            nationality: locationInfo.nationality,
+                            zipcode: locationInfo.zipcode,
+                        });
+                        setPage(page + 1);
+                    } else {
+                        console.error('Failed to update user');
+                    }
+                } else {
+                    const response = await axios.post('/api/uses/locationinfo', locationInfo);
+                    alert("User Saved Successfully!!", response.data);
+                    const userId = response.data.data;
+                    setFormData({
+                        ...formData, address: locationInfo.address,
+                        nationality: locationInfo.nationality,
+                        zipcode: locationInfo.zipcode,
+                        locationId: userId,
+                    });
+                    setPage(page + 1);
+                }
+            } catch (error) {
+                alert("Error Saving User", error);
+                console.log(error);
+            }
         }
+
     }
 
     const validateForm = (inputValues) => {
@@ -47,16 +99,16 @@ const LocationInfo = ({ page, setPage, formData, setFormData }) => {
                 className='my-1'
                 type="text"
                 placeholder="Address"
-                value={formData.address}
+                value={locationInfo.address}
                 name='address'
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={(e) => setLocationInfo({ ...locationInfo, address: e.target.value })}
             />
             {submit && errors.address && <div className="text-red-600 text-start">{errors.address}</div>}
             <select
                 className='my-1'
-                value={formData.nationality}
+                value={locationInfo.nationality}
                 name='nationality'
-                onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
+                onChange={(e) => setLocationInfo({ ...locationInfo, nationality: e.target.value })}
             >
                 <option value="">Select Nationality</option>
                 <option value="Indian">Indian</option>
@@ -69,9 +121,9 @@ const LocationInfo = ({ page, setPage, formData, setFormData }) => {
                 className='my-1'
                 type="text"
                 placeholder="Zipcode"
-                value={formData.zipcode}
+                value={locationInfo.zipcode}
                 name='zipcode'
-                onChange={(e) => setFormData({ ...formData, zipcode: e.target.value })}
+                onChange={(e) => setLocationInfo({ ...locationInfo, zipcode: e.target.value })}
             />
             {submit && errors.zipcode && <div className="text-red-600 text-start">{errors.zipcode}</div>}
 
